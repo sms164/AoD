@@ -14,13 +14,14 @@ aood<-ad[order(ad$country, ad$yearTrt), ]
 aod<-as.data.table(aood)
 
 #Explore data
-describe(aod)
+#describe(aod)
 
 #Create Simple Calculated Variables
-aod$tabReq<-aod$trtAppr*2.8
+aod$calcTrtAppr<-ifelse(is.na(aod$trtAppr)==T, aod$popTarg, aod$trtAppr)
+aod$tabReq<-aod$calcTrtAppr*2.8
 aod$tabRec<-aod$botRec*500
-aod$calcTabReq<-ifelse(is.na(aod$tabReq)==T, aod$tabShip, aod$tabReq)
-aod$tabAvail<-aod$tabInStock+aod$calcTabReq
+aod$calcTabRec<-ifelse(is.na(aod$tabRec)==T, aod$tabShip, aod$tabRec)
+aod$tabAvail<-aod$tabInStock+aod$calcTabRec
 aod$diffTrtJA<-aod$popTarg-aod$trtAppr
 
 
@@ -31,19 +32,19 @@ aod<-aod[, tabReq1ya:=shift(tabReq,n=1, fill=NA, type="lag"), by=country]
 aod$tabChg1y<-aod$tabReq-aod$tabReq1ya
 aod$pctChg1y<-aod$tabChg1y/aod$tabReq1ya
 
-#Dependent Variable Definitions
-#tabRem[i]<-tabInStock[i+1]
-#pctRem<-tabRem/tabAvail
-#tabChg1y[i]<-tabReq[i]-tabReq[i-1]
-#pctChg1y[i]<-tabChg1y[i]/tabReq[i-1]
-
-
-
-
 #Create variable to assess consistency of requests, usage and reported leftover
+aod$tabvstrt<-NULL
+aod$diffTrtAva<-aod$tabAvail-aod$tabReq
+aod$sdifTrtAva<-ifelse(abs(aod$diffTrtAva)>500, aod$diffTrtAva, 0)
 
 #Create variable to assess the estimated number of treatments based on leftovers
+aod$tabTrtRate<-round((aod$tabAvail-aod$tabRem)/2.8,0)
+
+#Compare performed treatments vs requested treatments
+aod$trtComp<-aod$calcTrtAppr-aod$tabTrtRate
+aod$pctTrtComp<-aod$tabTrtRate/aod$calcTrtAppr
 
 
+#Create Desired Table for a Country
 
 
