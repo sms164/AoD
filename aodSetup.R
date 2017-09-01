@@ -29,11 +29,10 @@ aod$diffTrtJA<-aod$popTarg-aod$trtAppr
 aod<-aod[, tabRem:=shift(tabInStock,n=1, fill=NA, type="lead"), by=country]
 aod$pctRem<-aod$tabRem/aod$tabAvail
 aod<-aod[, tabReq1ya:=shift(tabReq,n=1, fill=NA, type="lag"), by=country]
-aod$tabChg1y<-aod$tabReq-aod$tabReq1ya
+aod$tabChg1y<-round(aod$tabReq-aod$tabReq1ya,0)
 aod$pctChg1y<-aod$tabChg1y/aod$tabReq1ya
 
 #Create variable to assess consistency of requests, usage and reported leftover
-aod$tabvstrt<-NULL
 aod$diffTrtAva<-aod$tabAvail-aod$tabReq
 aod$sdifTrtAva<-ifelse(abs(aod$diffTrtAva)>500, aod$diffTrtAva, 0)
 
@@ -44,7 +43,27 @@ aod$tabTrtRate<-round((aod$tabAvail-aod$tabRem)/2.8,0)
 aod$trtComp<-aod$calcTrtAppr-aod$tabTrtRate
 aod$pctTrtComp<-aod$tabTrtRate/aod$calcTrtAppr
 
-
 #Create Desired Table for a Country
+pickcountry<-function(ds,country){
+  which<-which(ds$country==country)
+  countryds<-as.data.frame(ds[which,])
+  return(countryds)
+}
+
+#Success
+Togo<-pickcountry(ds=aod,country="Togo")
+
+Togo$pctRemfmt<-ifelse(is.na(Togo$pctRem)==T, "NA", paste(100*round(Togo$pctRem,2),"%", sep=""))
+Togo$pctChg1yfmt<-ifelse(is.na(Togo$pctChg1y)==T, "NA", paste(100*round(Togo$pctChg1y,2),"%", sep=""))
 
 
+myvars<-c("yearTrt", "calcTrtAppr", "tabReq", "tabInStock", "tabShip", "tabRem", "pctRemfmt", "tabChg1y", "pctChg1yfmt")
+tab<-Togo[myvars]
+tabs<-t(tab[,2:9])
+colnames(tabs)<-tab$yearTrt[]
+tabs<-tabs[2:9,]
+
+
+pdf("dataout.pdf", height=11, width=8.5)
+grid.table(tabs)
+dev.off()
