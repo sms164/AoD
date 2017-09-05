@@ -130,5 +130,3 @@ country<-pickcountry(aodcalc,"Togo", 2014, 2016)
 
 
 
-=======
->>>>>>> 209b24158107d7aebd7f45b57c67d86b8ab851a5
