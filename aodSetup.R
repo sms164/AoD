@@ -64,20 +64,6 @@ tab<-Togo[myvars]
 tabs<-t(tab[,2:9])
 colnames(tabs)<-tab$yearTrt[]
 
-#Explore export options 
-
-pdf("dataout.pdf", height=11, width=8.5)
-grid.table(tabs)
-dev.off()
-
-library(rtf)
-rtffile <- RTF("rtf.doc")  # this can be an .rtf or a .doc
-addParagraph(rtffile, "This is the table of tablets:\n")
-addTable(rtffile, tabs)
-addParagraph(rtffile, "\n\nThis is the nicer looking table we made above:\n")
-addTable(rtffile, cbind(rownames(outtab), outtab))
-done(rtffile)
-
 
 #-------------------------------------------------------------------------------------
 # Functions
@@ -144,3 +130,5 @@ country<-pickcountry(aodcalc,"Togo", 2014, 2016)
 
 
 
+=======
+>>>>>>> 209b24158107d7aebd7f45b57c67d86b8ab851a5
