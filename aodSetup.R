@@ -3,11 +3,13 @@ install.packages("googlesheets")
 install.packages("Hmisc")
 install.packages("data.table")
 install.packages("rtf")
+install.packages("scales")
 
 library("googlesheets")
 library("Hmisc")
 library("data.table")
 library("rtf")
+library("scales")
 
 #Import data
 aodimport<-gs_title("Analysis of Demand")
@@ -116,17 +118,28 @@ pickcountry<-function(ds,country,startyr=NA, endyr=NA){
 }
 
 
-#Use functions:
+tablefmt<-function(table){
+  table$pctRemfmt<-percent(round(table$pctRem,3))
+  table$pctChg1yfmt<-percent(round(table$pctChg1y,3))
+  table$calcTrtAppr<-format(table$calcTrtAppr, big.mark=",")
+  table$tabReq<-format(table$tabReq, big.mark=",")
+  table$tabInStock<-format(table$tabInStock, big.mark=",")
+  table$tabShip<-format(table$tabShip, big.mark=",")
+  table$tabRem<-format(table$tabRem, big.mark=",")
+  table$tabChg1y<-format(table$tabChg1y, big.mark=",")  
+  myvars<-c("yearTrt", "calcTrtAppr", "tabReq", "tabInStock", "tabShip", "tabRem", "pctRemfmt", "tabChg1y", "pctChg1yfmt")
+  tab<-table[myvars]
+  tabs<-t(tab[,-1])
+  colnames(tabs)<-tab$yearTrt[]
+  return(tabs)
+}
 
+
+#Use functions:
 
 aod<-aodimportf(title="Analysis of Demand", ws=4)
 aodcalc<-calcvar(aod)
 country<-pickcountry(aodcalc,"Togo", 2014, 2016)
-
-
-
-
-
-
+finaltab<-tablefmt(country)
 
 
