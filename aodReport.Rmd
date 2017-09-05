@@ -1,0 +1,41 @@
+---
+title: "Analysis of Demand"
+author: "Mectizan Donation Program"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+
+
+rm(list = ls())
+
+library(knitr)
+library(markdown)
+opts_chunk$set(message=FALSE, echo = F,
+               warning = F,fig.height = 5, fig.width = 10, tidy = F)
+
+#Work
+opts_knit$set(root.dir = "M:/DataManager/AnalysisOfDemand")
+#Laptop
+
+source("./aodFunctions.R")
+
+
+
+
+```
+
+
+```{r function, include=FALSE}
+
+output<-AOD(dataset=, country=, startyr=, endyr=)
+
+
+```
+
+```{r display}
+
+print(output$table)
+
+
+```
