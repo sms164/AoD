@@ -2,10 +2,12 @@
 install.packages("googlesheets")
 install.packages("Hmisc")
 install.packages("data.table")
+install.packages("rtf")
 
 library("googlesheets")
 library("Hmisc")
 library("data.table")
+library("rtf")
 
 #Import data
 aodimport<-gs_title("Analysis of Demand")
@@ -61,9 +63,84 @@ myvars<-c("yearTrt", "calcTrtAppr", "tabReq", "tabInStock", "tabShip", "tabRem",
 tab<-Togo[myvars]
 tabs<-t(tab[,2:9])
 colnames(tabs)<-tab$yearTrt[]
-tabs<-tabs[2:9,]
 
+#Explore export options 
 
 pdf("dataout.pdf", height=11, width=8.5)
 grid.table(tabs)
 dev.off()
+
+library(rtf)
+rtffile <- RTF("rtf.doc")  # this can be an .rtf or a .doc
+addParagraph(rtffile, "This is the table of tablets:\n")
+addTable(rtffile, tabs)
+addParagraph(rtffile, "\n\nThis is the nicer looking table we made above:\n")
+addTable(rtffile, cbind(rownames(outtab), outtab))
+done(rtffile)
+
+
+#-------------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------------
+
+#Import Data function
+aodimportf<-function(title, ws){
+  aodimport<-gs_title(title)
+  ad<-gs_read(aodimport, ws=ws)
+  aood<-ad[order(ad$country, ad$yearTrt), ]
+  aod<-as.data.table(aood)
+  return(aod)
+}
+
+#Create Calculated Variables function 
+calcvar<-function(ds){
+  #simple
+  ds$calcTrtAppr<-ifelse(is.na(ds$trtAppr)==T, ds$popTarg, ds$trtAppr)
+  ds$tabReq<-ds$calcTrtAppr*2.8
+  ds$tabRec<-ds$botRec*500
+  ds$calcTabRec<-ifelse(is.na(ds$tabRec)==T, ds$tabShip, ds$tabRec)
+  ds$tabAvail<-ds$tabInStock+ds$calcTabRec
+  ds$diffTrtJA<-ds$popTarg-ds$trtAppr
+  #lead/lag
+  ds<-ds[, tabRem:=shift(tabInStock,n=1, fill=NA, type="lead"), by=country]
+  ds$pctRem<-ds$tabRem/ds$tabAvail
+  ds<-ds[, tabReq1ya:=shift(tabReq,n=1, fill=NA, type="lag"), by=country]
+  ds$tabChg1y<-round(ds$tabReq-ds$tabReq1ya,0)
+  ds$pctChg1y<-ds$tabChg1y/ds$tabReq1ya
+  #compare
+  ds$diffTrtAva<-ds$tabAvail-ds$tabReq
+  ds$sdifTrtAva<-ifelse(abs(ds$diffTrtAva)>500, ds$diffTrtAva, 0)
+  ds$tabTrtRate<-round((ds$tabAvail-ds$tabRem)/2.8,0)
+  ds$trtComp<-ds$calcTrtAppr-ds$tabTrtRate
+  ds$pctTrtComp<-ds$tabTrtRate/ds$calcTrtAppr
+  return(ds)
+}
+
+#Pick country and years 
+pickcountry<-function(ds,country,startyr=NA, endyr=NA){
+  which<-which(ds$country==country)
+  countryds<-as.data.frame(ds[which,])
+  if (is.na(startyr)==F) {
+    countryds<-countryds[which(countryds$yearTrt>=startyr),]
+  }
+  if (is.na(endyr)==F) {
+    countryds<-countryds[which(countryds$yearTrt<=endyr),]
+  }
+  return(countryds)
+}
+
+
+#Use functions:
+
+
+aod<-aodimportf(title="Analysis of Demand", ws=4)
+aodcalc<-calcvar(aod)
+country<-pickcountry(aodcalc,"Togo", 2014, 2016)
+
+
+
+
+
+
+
+
