@@ -2,10 +2,12 @@
 install.packages("googlesheets")
 install.packages("Hmisc")
 install.packages("data.table")
+install.packages("rtf")
 
 library("googlesheets")
 library("Hmisc")
 library("data.table")
+library("rtf")
 
 #Import data
 aodimport<-gs_title("Analysis of Demand")
@@ -61,9 +63,18 @@ myvars<-c("yearTrt", "calcTrtAppr", "tabReq", "tabInStock", "tabShip", "tabRem",
 tab<-Togo[myvars]
 tabs<-t(tab[,2:9])
 colnames(tabs)<-tab$yearTrt[]
-tabs<-tabs[2:9,]
+
 
 
 pdf("dataout.pdf", height=11, width=8.5)
 grid.table(tabs)
 dev.off()
+
+library(rtf)
+rtffile <- RTF("rtf.doc")  # this can be an .rtf or a .doc
+addParagraph(rtffile, "This is the table of tablets:\n")
+addTable(rtffile, tabs)
+addParagraph(rtffile, "\n\nThis is the nicer looking table we made above:\n")
+addTable(rtffile, cbind(rownames(outtab), outtab))
+done(rtffile)
+
