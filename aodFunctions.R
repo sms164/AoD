@@ -50,8 +50,8 @@ pickcountry<-function(ds,country,startyr=NA, endyr=NA){
 
 
 tablefmt<-function(table){
-  table$pctRemfmt<-percent(round(table$pctRem,3))
-  table$pctChg1yfmt<-percent(round(table$pctChg1y,3))
+  table$pctRemfmt<-ifelse(is.na(table$pctRem)==F,percent(round(table$pctRem,3)), "-")
+  table$pctChg1yfmt<-ifelse(is.na(table$pctChg1y)==F,percent(round(table$pctChg1y,3)), "-")
   table$calcTrtAppr<-format(table$calcTrtAppr, big.mark=",")
   table$tabReq<-format(table$tabReq, big.mark=",")
   table$tabInStock<-format(table$tabInStock, big.mark=",")
@@ -60,15 +60,17 @@ tablefmt<-function(table){
   table$tabChg1y<-format(table$tabChg1y, big.mark=",")  
   myvars<-c("yearTrt", "calcTrtAppr", "tabReq", "tabInStock", "tabShip", "tabRem", "pctRemfmt", "tabChg1y", "pctChg1yfmt")
   tab<-table[myvars]
+  colnames(tab)<-c("Treatment Year", "Treatments Approved", "Tablets Required for MDA", "Tablets Left in Stock from Previous Year", "Tablets Shipped", "Tablets Remaining After MDA", "Percent of Availible Tablets Remaining After MDA", "Change in Demand of Tablets from Previous Year", "Percent Change in Demand of Tablets from Previous Year")
   tabs<-t(tab[,-1])
-  colnames(tabs)<-tab$yearTrt[]
+  colnames(tabs)<-tab$`Treatment Year`
+  tabs<-ifelse(tabs=="       NA", "-", tabs)
   return(tabs)
 }
 
 
 #Master Function:
 
-countryaod<-function(titlem, wsm, countrym, startyrm, endyrm){
+countryaod<-function(titlem, wsm, countrym, startyrm=NA, endyrm=NA){
   rawaod<-aodimportf(title=titlem, ws=wsm)
   aodcalc<-calcvar(rawaod)
   country<-pickcountry(aodcalc, countrym, startyrm, endyrm)

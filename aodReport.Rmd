@@ -1,16 +1,25 @@
 ---
 title: "Analysis of Demand"
 author: "Mectizan Donation Program"
-output: word_document
+output:
+  pdf_document: default
+  word_document: default
+classoption: landscape
 ---
 
 ```{r setup, include=FALSE}
 
-
 rm(list = ls())
 
-library(knitr)
-library(markdown)
+library("knitr")
+library("markdown")
+library("googlesheets")
+library("Hmisc")
+library("data.table")
+library("rtf")
+library("scales")
+library("htmlTable")
+library("pander")
 opts_chunk$set(message=FALSE, echo = F,
                warning = F,fig.height = 5, fig.width = 10, tidy = F)
 
@@ -19,23 +28,28 @@ opts_knit$set(root.dir = "M:/DataManager/AnalysisOfDemand")
 #Laptop
 
 source("./aodFunctions.R")
-
-
-
-
 ```
+
+```{r setvariables, include=F}
+setcountry<-"Togo"
+setwstitle<-"Analysis of Demand"
+setwsnum<-4
+setstartyr<-NA
+setendyr<-NA
+```
+
+#Country: `r setcountry`
 
 
 ```{r function, include=FALSE}
 
-output<-AOD(dataset=, country=, startyr=, endyr=)
-
+countryX<-countryaod(setwstitle, setwsnum, setcountry, setstartyr, setendyr)
 
 ```
 
 ```{r display}
 
-print(output$table)
+kable(countryX, align=c("r"))
 
 
 ```

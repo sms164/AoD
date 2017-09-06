@@ -4,12 +4,16 @@ install.packages("Hmisc")
 install.packages("data.table")
 install.packages("rtf")
 install.packages("scales")
+install.packages("htmlTable")
+install.packages("knitr")
 
 library("googlesheets")
 library("Hmisc")
 library("data.table")
 library("rtf")
 library("scales")
+library("htmlTable")
+library("knitr")
 
 #Import data
 aodimport<-gs_title("Analysis of Demand")
@@ -63,8 +67,9 @@ Togo$pctChg1yfmt<-ifelse(is.na(Togo$pctChg1y)==T, "NA", paste(100*round(Togo$pct
 
 myvars<-c("yearTrt", "calcTrtAppr", "tabReq", "tabInStock", "tabShip", "tabRem", "pctRemfmt", "tabChg1y", "pctChg1yfmt")
 tab<-Togo[myvars]
+colnames(tab)<-c("Treatment Year", "Treatments Approved", "Tablets Required for MDA", "Tablets Left in Stock from Previous Year", "Tablets Shipped", "Tablets Remaining After MDA", "Percent of Availible Tablets Remaining After MDA", "Change in Demand of Tablets from Previous Year", "Percent Change in Demand of Tablets from Previous Year")
 tabs<-t(tab[,2:9])
-colnames(tabs)<-tab$yearTrt[]
+colnames(tabs)<-tab$`Treatment Year`
 
 
 #-------------------------------------------------------------------------------------
@@ -129,8 +134,10 @@ tablefmt<-function(table){
   table$tabChg1y<-format(table$tabChg1y, big.mark=",")  
   myvars<-c("yearTrt", "calcTrtAppr", "tabReq", "tabInStock", "tabShip", "tabRem", "pctRemfmt", "tabChg1y", "pctChg1yfmt")
   tab<-table[myvars]
+  colnames(tab)<-c("Treatment Year", "Treatments Approved", "Tablets Required for MDA", "Tablets Left in Stock from Previous Year", "Tablets Shipped", "Tablets Remaining After MDA", "Percent of Availible Tablets Remaining After MDA", "Change in Demand of Tablets from Previous Year", "Percent Change in Demand of Tablets from Previous Year")
   tabs<-t(tab[,-1])
-  colnames(tabs)<-tab$yearTrt[]
+  colnames(tabs)<-tab$`Treatment Year`
+  tabs<-ifelse(is.na(tabs)==T, "-", tabs)
   return(tabs)
 }
 
@@ -145,7 +152,6 @@ countryaod<-function(titlem, wsm, countrym, startyrm, endyrm){
 }
 
 #Run
-
 countryX<-countryaod("Analysis of Demand", 4, "Togo", 2014, 2016)
 
 
