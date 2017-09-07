@@ -38,18 +38,73 @@ setstartyr<-NA
 setendyr<-NA
 ```
 
-#Country: `r setcountry`
-
-
 ```{r function, include=FALSE}
 
 countryX<-countryaod(setwstitle, setwsnum, setcountry, setstartyr, setendyr)
 
 ```
 
+display original
+
 ```{r display}
 
-kable(countryX, align=c("r"))
-
+kable(countryX, align=c("r"), caption=setcountry)
 
 ```
+
+display latex
+
+```{r }
+kable(countryX, align=c("r"), format = "latex")
+
+```
+
+display html
+
+```{r }
+
+kable(countryX, align=c("r"), format = "html")
+
+```
+
+display rst
+
+```{r }
+
+kable(countryX, align=c("r"), format = "rst")
+
+```
+
+display markdown
+
+```{r }
+
+kable(countryX, align=c("r"), format = "markdown")
+
+```
+
+display pandoc
+
+```{r }
+
+kable(countryX, align=c("r"), format = "pandoc")
+
+```
+
+display markdown zero pad
+
+```{r }
+
+kable(countryX, align=c("r"), format = "markdown", padding=0)
+
+```
+
+display markdown 2 pad
+
+```{r }
+
+kable(countryX, align=c("r"), format = "markdown", padding=2)
+
+```
+
+end
