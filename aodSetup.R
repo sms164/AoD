@@ -35,7 +35,7 @@ aod$diffTrtJA<-aod$popTarg-aod$trtAppr
 
 #Create variables dependent on next or previous year
 aod<-aod[, tabRem:=shift(tabInStock,n=1, fill=NA, type="lead"), by=country]
-aod$pctRem<-aod$tabRem/aod$tabAvail
+aod$pctUsed<-(aod$tabAvail-aod$tabRem)/aod$tabAvail
 aod<-aod[, tabReq1ya:=shift(tabReq,n=1, fill=NA, type="lag"), by=country]
 aod$tabChg1y<-round(aod$tabReq-aod$tabReq1ya,0)
 aod$pctChg1y<-aod$tabChg1y/aod$tabReq1ya

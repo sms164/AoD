@@ -22,7 +22,7 @@ calcvar<-function(ds){
   ds$diffTrtJA<-ds$popTarg-ds$trtAppr
   #lead/lag
   ds<-ds[, tabRem:=shift(tabInStock,n=1, fill=NA, type="lead"), by=country]
-  ds$pctRem<-ds$tabRem/ds$tabAvail
+  ds$pctUsed<-ds$tabRem/ds$tabAvail
   ds<-ds[, tabReq1ya:=shift(tabReq,n=1, fill=NA, type="lag"), by=country]
   ds$tabChg1y<-round(ds$tabReq-ds$tabReq1ya,0)
   ds$pctChg1y<-ds$tabChg1y/ds$tabReq1ya
@@ -50,7 +50,7 @@ pickcountry<-function(ds,country,startyr=NA, endyr=NA){
 
 
 tablefmt<-function(table){
-  table$pctRemfmt<-ifelse(is.na(table$pctRem)==F,percent(round(table$pctRem,3)), "-")
+  table$pctUsedfmt<-ifelse(is.na(table$pct)==F,percent(round(table$pctRem,3)), "-")
   table$pctChg1yfmt<-ifelse(is.na(table$pctChg1y)==F,percent(round(table$pctChg1y,3)), "-")
   table$calcTrtAppr<-format(table$calcTrtAppr, big.mark=",")
   table$tabReq<-format(table$tabReq, big.mark=",")
