@@ -3,6 +3,7 @@ title: "Analysis of Demand"
 author: "Mectizan Donation Program"
 output:
   pdf_document: default
+  html_document: default
   word_document: default
 classoption: landscape
 ---

@@ -50,7 +50,7 @@ pickcountry<-function(ds,country,startyr=NA, endyr=NA){
 
 
 tablefmt<-function(table){
-  table$pctUsedfmt<-ifelse(is.na(table$pct)==F,percent(round(table$pctRem,3)), "-")
+  table$pctUsedfmt<-ifelse(is.na(table$pctUsed)==F,percent(round(table$pctUsed,3)), "-")
   table$pctChg1yfmt<-ifelse(is.na(table$pctChg1y)==F,percent(round(table$pctChg1y,3)), "-")
   table$calcTrtAppr<-format(table$calcTrtAppr, big.mark=",")
   table$tabReq<-format(table$tabReq, big.mark=",")
@@ -58,9 +58,9 @@ tablefmt<-function(table){
   table$tabShip<-format(table$tabShip, big.mark=",")
   table$tabRem<-format(table$tabRem, big.mark=",")
   table$tabChg1y<-format(table$tabChg1y, big.mark=",")  
-  myvars<-c("yearTrt", "calcTrtAppr", "tabReq", "tabInStock", "tabShip", "tabRem", "pctRemfmt", "tabChg1y", "pctChg1yfmt")
+  myvars<-c("yearTrt", "calcTrtAppr", "tabReq", "tabInStock", "tabShip", "tabRem", "pctUsedfmt", "tabChg1y", "pctChg1yfmt")
   tab<-table[myvars]
-  colnames(tab)<-c("Treatment Year", "Treatments Approved", "Tablets Required for MDA", "Tablets Left in Stock from Previous Year", "Tablets Shipped", "Tablets Remaining After MDA", "Percent of Availible Tablets Remaining After MDA", "Change in Demand of Tablets from Previous Year", "Percent Change in Demand of Tablets from Previous Year")
+  colnames(tab)<-c("Treatment Year", "Treatments Approved", "Tablets Required for MDA", "Tablets Left in Stock from Previous Year", "Tablets Shipped", "Tablets Remaining After MDA", "Percent of Availible Tablets Utilized in MDA", "Change in Demand of Tablets from Previous Year", "Percent Change in Demand of Tablets from Previous Year")
   tabs<-t(tab[,-1])
   colnames(tabs)<-tab$`Treatment Year`
   tabs<-ifelse(tabs=="       NA", "-", tabs)
